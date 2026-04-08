@@ -1,36 +1,269 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CleanPro - Лендинг клининговой компании
 
-## Getting Started
+Высококонверсионный лендинг для клининговой компании, разработанный с учётом российских реалий и требований 152-ФЗ.
 
-First, run the development server:
+## 🚀 Быстрый старт
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+1. **Склонируйте репозиторий**
+   ```bash
+   git clone <your-repo-url>
+   cd cleaningL
+   ```
+
+2. **Откройте index.html в браузере**
+   - Просто дважды кликните по файлу `index.html`
+   - Или используйте локальный сервер (рекомендуется)
+
+3. **Настройте Telegram бота** (см. ниже)
+
+## 📁 Структура проекта
+
+```
+/project-root
+├── index.html              # Основная страница
+├── css/
+│   └── style.css          # Все стили (BEM, адаптив)
+├── js/
+│   └── main.js            # Логика форм, маска, Telegram
+├── img/                    # Изображения (заглушки)
+├── docs/
+│   └── policy.html        # Политика конфиденциальности (152-ФЗ)
+├── favicon.svg            # Фавиконка
+└── README.md              # Этот файл
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🤖 Настройка Telegram бота
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Шаг 1: Создание бота
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Откройте Telegram и найдите **@BotFather**
+2. Отправьте команду `/newbot`
+3. Следуйте инструкциям:
+   - Введите название бота (например, "CleanPro Заявки")
+   - Введите username бота (должен заканчиваться на `bot`, например `cleanpro_orders_bot`)
+4. **Скопируйте BOT_TOKEN** (вы получите его после создания)
 
-## Learn More
+### Шаг 2: Получение CHAT_ID
 
-To learn more about Next.js, take a look at the following resources:
+1. Найдите в Telegram бота **@userinfobot**
+2. Отправьте ему любое сообщение
+3. Он вернёт ваш User ID — это и есть **CHAT_ID**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Шаг 3: Настройка в коде
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Откройте файл `js/main.js` и найдите секцию конфигурации (строка ~17):
 
-## Deploy on Vercel
+```javascript
+const TELEGRAM_CONFIG = {
+  // ⚠️ ВСТАВИТЬ СЮДА ВАШ BOT_TOKEN
+  BOT_TOKEN: '1234567890:ABCdefGHIjklMNOpqrsTUVwxyz',
+  
+  // ⚠️ ВСТАВИТЬ СЮДА ВАШ CHAT_ID
+  CHAT_ID: '123456789',
+  
+  API_URL: 'https://api.telegram.org/bot'
+};
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Шаг 4: Тестирование
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Откройте `index.html` в браузере
+2. Заполните форму и отправьте заявку
+3. Проверьте, что сообщение пришло в Telegram
+
+## ⚙️ Технические особенности
+
+### Маска телефона
+- Формат: `+7 (___) ___-__-__`
+- Автоматическая замена 8 на +7
+- Валидация по регулярному выражению
+
+### Валидация форм
+- Проверка имени (минимум 2 символа)
+- Проверка телефона (11 цифр, начинается с 7)
+- Обязательное согласие на обработку данных
+
+### 152-ФЗ compliance
+✅ Политика конфиденциальности в `/docs/policy.html`  
+✅ Чекбокс согласия рядом с формой  
+✅ Ссылка на политику в чекбоксе  
+✅ Реквизиты ИП в футере (ИНН, ОГРН)
+
+### Адаптивность
+- **Mobile**: 320px - 768px
+- **Tablet**: 769px - 1024px
+- **Desktop**: 1025px+
+
+## 🎨 Дизайн-система
+
+### Цвета
+```css
+Белый:       #FFFFFF
+Голубой фон: #E3F2FD
+Акцентный:   #2196F3
+Текст:       #333333
+```
+
+### Шрифт
+- **Inter** (подключается из Google Fonts)
+- Fallback: `-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto`
+
+### Иконки
+- Inline SVG (без внешних зависимостей)
+- Мессенджеры: WhatsApp, Telegram, VK
+
+## 📱 Мессенджеры
+
+Ссылки для мессенджеров (замените на свои):
+
+- **WhatsApp**: `https://wa.me/79990000000`
+- **Telegram**: `https://t.me/cleanpro`
+- **VK**: `https://vk.com/cleanpro`
+
+Находятся в:
+- `index.html` (строки ~30-50, header)
+- `index.html` (строки ~380-390, contacts section)
+
+## 🔒 Безопасность
+
+### ⚠️ ВАЖНО про BOT_TOKEN
+
+Хранить `BOT_TOKEN` в клиентском JavaScript **небезопасно**! Злоумышленник может украсть токен.
+
+**Рекомендации для продакшена:**
+
+1. **Используйте серверную часть** (PHP/Node.js/Python)
+2. **Serverless функции** (Vercel, Netlify Functions)
+3. **Ограничьте права бота** только на отправку сообщений
+
+Пример PHP-обработчика (`send.php`):
+
+```php
+<?php
+$botToken = 'YOUR_BOT_TOKEN';
+$chatId = 'YOUR_CHAT_ID';
+
+$data = json_decode(file_get_contents('php://input'), true);
+
+$message = "🧹 Новая заявка\n\n" .
+           "👤 Имя: " . $data['name'] . "\n" .
+           "📞 Телефон: " . $data['phone'];
+
+$url = "https://api.telegram.org/bot{$botToken}/sendMessage";
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+    'chat_id' => $chatId,
+    'text' => $message
+]));
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+
+$result = curl_exec($ch);
+curl_close($ch);
+
+echo $result;
+?>
+```
+
+## ✅ Чек-лист перед запуском
+
+- [ ] Настроен Telegram бот (BOT_TOKEN и CHAT_ID)
+- [ ] Протестирована отправка заявок
+- [ ] Заменены ссылки на мессенджеры (WhatsApp, Telegram, VK)
+- [ ] Обновлён телефон `+7 (999) 000-00-00` на реальный
+- [ ] Заполнены реквизиты ИП (ИНН, ОГРН) в `index.html` и `docs/policy.html`
+- [ ] Загружены реальные фото в секцию "Примеры работ" (`img/`)
+- [ ] Добавлена карта (Яндекс.Карты iframe) в секцию контактов
+- [ ] Заменён `favicon.svg` на `.ico` формат (используйте converter online)
+- [ ] Сайт размещён на HTTPS (обязательно для 152-ФЗ!)
+- [ ] Протестировано в Chrome, Safari, Яндекс.Браузере
+- [ ] Проверено на мобильных (iOS Safari, Chrome Android)
+
+## 🖼️ Добавление реальных фото
+
+1. Поместите фото в папку `img/`
+2. Оптимизируйте в формат WebP (используйте Squoosh.app)
+3. Замените заглушки в `index.html`:
+
+```html
+<!-- Было -->
+<div class="ba-card__placeholder">📷 Фото до уборки</div>
+
+<!-- Стало -->
+<img src="img/before-1.webp" alt="Квартира до уборки" loading="lazy">
+```
+
+## 🗺️ Добавление карты
+
+1. Откройте [Яндекс.Конструктор карт](https://yandex.ru/map-constructor/)
+2. Создайте карту с вашей точкой
+3. Скопируйте код для вставки (iframe)
+4. Вставьте в `index.html` вместо `.contacts__map-placeholder`
+
+## 📊 Калькулятор (бонус)
+
+В `js/main.js` встроен калькулятор стоимости. Можно вызвать из консоли:
+
+```javascript
+calculateCost(50, 'Генеральная уборка')
+```
+
+Вернёт объект с расчётом:
+```javascript
+{
+  type: 'Генеральная уборка',
+  area: 50,
+  basePrice: 5000,
+  perMeter: 100,
+  total: 10000
+}
+```
+
+## 🐛 Troubleshooting
+
+### Заявки не приходят в Telegram
+
+1. Проверьте консоль браузера (F12) на ошибки
+2. Убедитесь, что BOT_TOKEN и CHAT_ID правильные
+3. Проверьте, что бот добавлен в чат (если группа)
+4. Откройте Network tab и посмотрите ответ от Telegram API
+
+### Форма не отправляется
+
+1. Проверьте, что все обязательные поля заполнены
+2. Телефон должен быть в формате `+7 (XXX) XXX-XX-XX`
+3. Чекбокс согласия должен быть активен
+
+### Мобильное меню не работает
+
+1. Убедитесь, что `js/main.js` подключён в `index.html`
+2. Проверьте консоль на ошибки JavaScript
+3. Обновите кэш браузера (Ctrl+Shift+R)
+
+## 📈 Рекомендации по конверсии
+
+Из `recommendations.md`:
+
+✅ **Лид-магнит**: Скидка 10% на первую уборку (уже добавлен)  
+✅ **Живые фото**: Замените заглушки на реальные фото клинеров  
+✅ **Калькулятор**: Реализован (вызов из консоли)  
+✅ **Социальные доказательства**: Рейтинг 4.9 и отзывы добавлены  
+✅ **Мессенджеры**: WhatsApp приоритетнее Telegram  
+✅ **Оплата**: Указаны МИР, Visa, MC, СБП, наличные  
+✅ **Гео**: Москва указана в заголовке  
+✅ **Юр. информация**: ИНН и ОГРН в футере  
+
+## 📝 Лицензия
+
+MIT License — используйте свободно.
+
+## 👨‍💻 Автор
+
+Создано с ❤️ для клинингового бизнеса в России.
+
+---
+
+**Нужна помощь?**  
+Откройте Issue в репозитории или напишите на info@cleanpro.ru

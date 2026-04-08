@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CleanPro - Favicon Generator</title>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h1 {
+      color: #2196F3;
+      margin-bottom: 20px;
+    }
+    canvas {
+      border: 1px solid #E0E0E0;
+      margin: 20px 0;
+    }
+    button {
+      background: #2196F3;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #1976D2;
+    }
+    .instructions {
+      margin-top: 20px;
+      padding: 20px;
+      background: #F5F5F5;
+      border-radius: 8px;
+      text-align: left;
+    }
+    .instructions ol {
+      margin-left: 20px;
+    }
+    .instructions li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 CleanPro Favicon Generator</h1>
+    <p>Нажмите кнопку, чтобы скачать favicon.ico</p>
+    
+    <canvas id="faviconCanvas" width="64" height="64"></canvas>
+    <br>
+    <button onclick="downloadFavicon()">Скачать favicon.ico</button>
+    
+    <div class="instructions">
+      <h3>Как использовать:</h3>
+      <ol>
+        <li>Нажмите "Скачать favicon.ico"</li>
+        <li>Сохраните файл в корень проекта</li>
+        <li>Замените существующий favicon.ico</li>
+        <li>Обновите страницу в браузере (Ctrl+Shift+R)</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    // Рисуем favicon
+    const canvas = document.getElementById('faviconCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Фон - синий круг
+    ctx.beginPath();
+    ctx.arc(32, 32, 30, 0, 2 * Math.PI);
+    ctx.fillStyle = '#2196F3';
+    ctx.fill();
+
+    // Буква "C"
+    ctx.font = 'bold 40px Arial, sans-serif';
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('C', 32, 34);
+
+    /**
+     * Конвертирует canvas в ICO формат
+     */
+    function canvasToIco(canvas) {
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Получаем PNG данные
+      const pngDataUrl = canvas.toDataURL('image/png');
+      const byteString = atob(pngDataUrl.split(',')[1]);
+      
+      // Создаём ICO header
+      const icoHeader = new ArrayBuffer(22);
+      const view = new DataView(icoHeader);
+      
+      // ICO header structure
+      view.setUint16(0, 0, true);      // Reserved
+      view.setUint16(2, 1, true);      // Type (1 = ICO)
+      view.setUint16(4, 1, true);      // Number of images
+      
+      // Entry
+      view.setUint8(6, width);         // Width
+      view.setUint8(7, height);        // Height
+      view.setUint8(8, 0);             // Color palette
+      view.setUint8(9, 0);             // Reserved
+      view.setUint16(10, 1, true);     // Color planes
+      view.setUint16(12, 32, true);    // Bits per pixel
+      
+      // Получаем размер PNG
+      view.setUint32(14, byteString.length, true); // Image size
+      view.setUint32(18, 22, true);    // Image offset (after header)
+      
+      // Конвертируем в blob
+      const icoBytes = new Uint8Array(22 + byteString.length);
+      icoBytes.set(new Uint8Array(icoHeader), 0);
+      
+      for (let i = 0; i < byteString.length; i++) {
+        icoBytes[22 + i] = byteString.charCodeAt(i);
+      }
+      
+      return new Blob([icoBytes], { type: 'image/x-icon' });
+    }
+
+    function downloadFavicon() {
+      const blob = canvasToIco(canvas);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'favicon.ico';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Рисуем превью
+    drawPreviews();
+
+    function drawPreviews() {
+      // Показываем разные размеры
+      const sizes = [16, 32, 48, 64];
+      const previewContainer = document.createElement('div');
+      previewContainer.style.marginTop = '20px';
+      previewContainer.style.display = 'flex';
+      previewContainer.style.gap = '10px';
+      previewContainer.style.justifyContent = 'center';
+      previewContainer.style.flexWrap = 'wrap';
+
+      sizes.forEach(size => {
+        const wrapper = document.createElement('div');
+        wrapper.style.textAlign = 'center';
+        
+        const previewCanvas = document.createElement('canvas');
+        previewCanvas.width = size;
+        previewCanvas.height = size;
+        previewCanvas.style.border = '1px solid #E0E0E0';
+        previewCanvas.style.imageRendering = 'pixelated';
+        
+        const pCtx = previewCanvas.getContext('2d');
+        pCtx.drawImage(canvas, 0, 0, size, size);
+        
+        const label = document.createElement('div');
+        label.style.fontSize = '12px';
+        label.style.color = '#666';
+        label.style.marginTop = '4px';
+        label.textContent = `${size}x${size}`;
+        
+        wrapper.appendChild(previewCanvas);
+        wrapper.appendChild(label);
+        previewContainer.appendChild(wrapper);
+      });
+
+      document.querySelector('.container').appendChild(previewContainer);
+    }
+  </script>
+</body>
+</html>
